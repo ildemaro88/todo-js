@@ -7,6 +7,7 @@ const txtInput = document.querySelector('.new-todo');
 const btnBorrar = document.querySelector('.clear-completed');
 const ulFilters = document.querySelector('.filters');
 const anchorFiltros = document.querySelectorAll('.filtro');
+const cantidadPendiente = document.querySelector('.todo-count');
 
 export  const crearTodoHtml = (todo) => {
     const htmlTodo = `
@@ -23,7 +24,7 @@ export  const crearTodoHtml = (todo) => {
     const div = document.createElement('div');
     div.innerHTML = htmlTodo;
     divTodoList.append(div.firstElementChild);
-
+    actualizarPendientes();
     return div.firstElementChild;
 }
 
@@ -35,6 +36,7 @@ txtInput.addEventListener('keyup', (event) => {
         crearTodoHtml(nuevoTodo);
         txtInput.value = '';
         console.log(todoList);
+        actualizarPendientes();
     }
 });
 
@@ -50,10 +52,12 @@ divTodoList.addEventListener('click', (evento) => {
         todoList.eliminarTodo(todoId);
         divTodoList.removeChild(todoElemento);
     }
+    actualizarPendientes();
 });
 
 btnBorrar.addEventListener('click', () => {
     todoList.eliminarCompletados();
+    let total = 0;
     for(let i = divTodoList.children.length-1; i >= 0; i--){
         const elemento = divTodoList.children[i];
         if(elemento.classList.contains('completed')){
@@ -61,6 +65,7 @@ btnBorrar.addEventListener('click', () => {
 
         }
     }
+    actualizarPendientes();
 })
 
 ulFilters.addEventListener('click', (event) => {
@@ -88,3 +93,14 @@ ulFilters.addEventListener('click', (event) => {
    }
 
 });
+
+const actualizarPendientes = () => {
+    let total = 0;
+    for(const elemento of divTodoList.children){
+        const completado = elemento.classList.contains('completed');
+        if(!completado){
+            total++;
+        }
+    }
+    cantidadPendiente.innerHTML= `${total} pendiente(s)`;
+}
